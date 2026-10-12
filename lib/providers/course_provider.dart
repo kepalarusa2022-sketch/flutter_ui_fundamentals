@@ -1,3 +1,6 @@
+// Student ID: 2415051101 - Jack Rich Loro
+// Tahap 15: CourseProvider dengan penanganan state & debugging
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ui_fundamentals/models/course.dart';
 import 'package:flutter_ui_fundamentals/repositories/course_repository.dart';
@@ -37,6 +40,7 @@ class CourseProvider extends ChangeNotifier {
     } else {
       favorites.add(code);
     }
+    // Wajib memanggil notifyListeners() agar UI memperbarui tampilan
     notifyListeners();
   }
 }
