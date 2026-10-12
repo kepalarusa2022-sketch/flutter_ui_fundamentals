@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// 1. Membuat CourseProvider berbasis ChangeNotifier
 class CourseProvider extends ChangeNotifier {
   final Set<String> favorites = {};
 
@@ -23,7 +22,6 @@ class CourseProvider extends ChangeNotifier {
 
 void main() {
   runApp(
-    // 3. Membungkus aplikasi dengan ChangeNotifierProvider
     ChangeNotifierProvider(
       create: (_) => CourseProvider(),
       child: const CourseExplorerApp(),
@@ -38,25 +36,23 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Course Explorer - Tahap 6',
+      title: 'Course Explorer - Tahap 7',
       theme: ThemeData(primarySwatch: Colors.indigo, useMaterial3: true),
-      home: const ProviderHomePage(),
+      home: const WatchReadConsumerPage(),
     );
   }
 }
 
-class ProviderHomePage extends StatelessWidget {
-  const ProviderHomePage({super.key});
+class WatchReadConsumerPage extends StatelessWidget {
+  const WatchReadConsumerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Identitas Mahasiswa
     final String studentName = "Jack Rich Loro";
     final String studentId = "2415051101";
 
-    // Mengakses provider menggunakan context.watch()
-    final courseProvider = context.watch<CourseProvider>();
-    final bool isFav = courseProvider.isFavorite('PROV-01');
+    // 1. Menggunakan watch() untuk memantau total favorite dan memicu rebuild pada halaman ini
+    final totalFavorites = context.watch<CourseProvider>().favorites.length;
 
     return Scaffold(
       appBar: AppBar(
@@ -68,7 +64,7 @@ class ProviderHomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Total Favorites via Provider: ${courseProvider.favorites.length}',
+              'Total Favorites (watch): $totalFavorites',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -80,17 +76,23 @@ class ProviderHomePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Provider & Dependency Injection',
+                      'State Management & Architecture',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    IconButton(
-                      icon: Icon(
-                        isFav ? Icons.favorite : Icons.favorite_border,
-                        color: isFav ? Colors.red : Colors.grey,
-                      ),
-                      onPressed: () {
-                        // Mengakses provider tanpa listen untuk memanggil aksi
-                        context.read<CourseProvider>().toggleFavorite('PROV-01');
+                    // 3. Menggunakan Consumer pada bagian kecil UI (icon button saja)
+                    Consumer<CourseProvider>(
+                      builder: (context, provider, child) {
+                        final bool isFav = provider.isFavorite('T7-01');
+                        return IconButton(
+                          icon: Icon(
+                            isFav ? Icons.favorite : Icons.favorite_border,
+                            color: isFav ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: () {
+                            // 2. Menggunakan read() pada onPressed untuk memanggil aksi tanpa listen
+                            context.read<CourseProvider>().toggleFavorite('T7-01');
+                          },
+                        );
                       },
                     ),
                   ],
