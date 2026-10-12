@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_ui_fundamentals/models/course.dart';
 import 'package:flutter_ui_fundamentals/services/course_service.dart';
+import 'package:flutter_ui_fundamentals/repositories/course_repository.dart';
 
 class CourseProvider extends ChangeNotifier {
-  final CourseService _courseService = CourseService();
+  // Menggunakan Repository alih-alih langsung memanggil Service
+  final CourseRepository _courseRepository = CourseRepository(CourseService());
   List<Course> courses = [];
   bool isLoading = false;
   final Set<String> favorites = {};
@@ -16,7 +18,7 @@ class CourseProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      courses = await _courseService.loadCourses();
+      courses = await _courseRepository.getCourses();
     } catch (e) {
       debugPrint('Error loading courses: $e');
     }
@@ -55,15 +57,15 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Course Explorer - Tahap 9',
+      title: 'Course Explorer - Tahap 10',
       theme: ThemeData(primarySwatch: Colors.indigo, useMaterial3: true),
-      home: const ServiceTestPage(),
+      home: const RepositoryTestPage(),
     );
   }
 }
 
-class ServiceTestPage extends StatelessWidget {
-  const ServiceTestPage({super.key});
+class RepositoryTestPage extends StatelessWidget {
+  const RepositoryTestPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +84,7 @@ class ServiceTestPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Pengujian CourseService & Asset JSON',
+              'Pengujian Repository Pattern',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
