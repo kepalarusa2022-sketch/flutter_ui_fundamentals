@@ -2,6 +2,24 @@
 
 import 'package:flutter/material.dart';
 
+// 1. Membuat ChangeNotifier class terpisah untuk mengelola state
+class CourseState extends ChangeNotifier {
+  final Set<String> favorites = {};
+
+  bool isFavorite(String code) {
+    return favorites.contains(code);
+  }
+
+  void toggleFavorite(String code) {
+    if (favorites.contains(code)) {
+      favorites.remove(code);
+    } else {
+      favorites.add(code);
+    }
+    notifyListeners(); // Memberi tahu widget yang mendengarkan bahwa state berubah
+  }
+}
+
 void main() {
   runApp(const CourseExplorerApp());
 }
@@ -13,25 +31,29 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Course Explorer - Tahap 4',
+      title: 'Course Explorer - Tahap 5',
       theme: ThemeData(primarySwatch: Colors.indigo, useMaterial3: true),
-      home: const ValueNotifierPage(),
+      home: const ChangeNotifierPage(),
     );
   }
 }
 
-class ValueNotifierPage extends StatelessWidget {
-  const ValueNotifierPage({super.key});
+class ChangeNotifierPage extends StatefulWidget {
+  const ChangeNotifierPage({super.key});
+
+  @override
+  State<ChangeNotifierPage> createState() => _ChangeNotifierPageState();
+}
+
+class _ChangeNotifierPageState extends State<ChangeNotifierPage> {
+  final String studentName = "Jack Rich Loro";
+  final String studentId = "2415051101";
+
+  // Inisialisasi CourseState
+  final CourseState courseState = CourseState();
 
   @override
   Widget build(BuildContext context) {
-    // Identitas Mahasiswa
-    final String studentName = "Jack Rich Loro";
-    final String studentId = "2415051101";
-
-    // 1. Membuat ValueNotifier<int> untuk nilai sederhana (jumlah favorite)
-    final ValueNotifier<int> favoriteCounter = ValueNotifier<int>(2);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('$studentId - $studentName'),
@@ -41,17 +63,16 @@ class ValueNotifierPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 2. Menampilkan nilai dengan ValueListenableBuilder agar rebuild area spesifik saja
-            ValueListenableBuilder<int>(
-              valueListenable: favoriteCounter,
-              builder: (context, value, child) {
+            AnimatedBuilder(
+              animation: courseState,
+              builder: (context, child) {
                 return Text(
-                  'Total Favorites (ValueNotifier): $value',
+                  'Total Favorites (ChangeNotifier): ${courseState.favorites.length}',
                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 );
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             Card(
               elevation: 2,
               child: Padding(
@@ -60,14 +81,22 @@ class ValueNotifierPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Pemrograman Mobile Flutter',
+                      'State Management & Architecture',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    // 3. Tombol untuk mengubah value notifier
-                    IconButton(
-                      icon: const Icon(Icons.favorite, color: Colors.red),
-                      onPressed: () {
-                        favoriteCounter.value += 1; // Mengubah nilai notifier
+                    AnimatedBuilder(
+                      animation: courseState,
+                      builder: (context, child) {
+                        final bool fav = courseState.isFavorite('SM-01');
+                        return IconButton(
+                          icon: Icon(
+                            fav ? Icons.favorite : Icons.favorite_border,
+                            color: fav ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: () {
+                            courseState.toggleFavorite('SM-01');
+                          },
+                        );
                       },
                     ),
                   ],
