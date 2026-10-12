@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_ui_fundamentals/services/course_service.dart';
 import 'package:flutter_ui_fundamentals/repositories/course_repository.dart';
 import 'package:flutter_ui_fundamentals/providers/course_provider.dart';
-import 'package:flutter_ui_fundamentals/screens/course_screen.dart';
+import 'package:flutter_ui_fundamentals/screens/main_navigation_screen.dart';
 
 void main() {
   final courseService = CourseService();
@@ -26,9 +26,12 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Course Explorer - Tahap 12',
-      theme: ThemeData(primarySwatch: Colors.indigo, useMaterial3: true),
-      home: const CourseScreen(),
+      title: 'Course Explorer v2',
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+        useMaterial3: true,
+      ),
+      home: const MainNavigationScreen(),
     );
   }
 }
