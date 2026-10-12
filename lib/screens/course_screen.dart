@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_ui_fundamentals/providers/course_provider.dart';
 import 'package:flutter_ui_fundamentals/widgets/course_card.dart';
+import 'package:flutter_ui_fundamentals/screens/favorites_screen.dart';
 
 class CourseScreen extends StatelessWidget {
   const CourseScreen({super.key});
@@ -16,6 +17,20 @@ class CourseScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('$studentId - $studentName'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite),
+            tooltip: 'Halaman Favorit',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FavoritesScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -25,9 +40,9 @@ class CourseScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Daftar Kursus (Refactored Structure)',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  'Daftar Kursus (Favorites: ${provider.favorites.length})',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   icon: const Icon(Icons.refresh),

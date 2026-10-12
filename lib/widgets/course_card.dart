@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_ui_fundamentals/models/course.dart';
 import 'package:flutter_ui_fundamentals/providers/course_provider.dart';
+import 'package:flutter_ui_fundamentals/screens/course_detail_screen.dart';
 
 class CourseCard extends StatelessWidget {
   final Course course;
@@ -17,6 +18,14 @@ class CourseCard extends StatelessWidget {
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CourseDetailScreen(course: course),
+            ),
+          );
+        },
         title: Text(
           course.title,
           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -30,7 +39,7 @@ class CourseCard extends StatelessWidget {
             color: isFav ? Colors.red : Colors.grey,
           ),
           onPressed: () {
-            provider.toggleFavorite(course.code);
+            context.read<CourseProvider>().toggleFavorite(course.code);
           },
         ),
       ),
