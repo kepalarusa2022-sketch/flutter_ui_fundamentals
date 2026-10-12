@@ -13,29 +13,33 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Course Explorer - Tahap 2',
+      title: 'Course Explorer - Tahap 3',
       theme: ThemeData(primarySwatch: Colors.indigo, useMaterial3: true),
-      home: const ParentStatePage(),
+      home: const LiftingStatePage(),
     );
   }
 }
 
-// Parent Widget memegang state favorites
-class ParentStatePage extends StatefulWidget {
-  const ParentStatePage({super.key});
+// Parent Widget sebagai Single Source of Truth
+class LiftingStatePage extends StatefulWidget {
+  const LiftingStatePage({super.key});
 
   @override
-  State<ParentStatePage> createState() => _ParentStatePageState();
+  State<LiftingStatePage> createState() => _LiftingStatePageState();
 }
 
-class _ParentStatePageState extends State<ParentStatePage> {
+class _LiftingStatePageState extends State<LiftingStatePage> {
   final String studentName = "Jack Rich Loro";
   final String studentId = "2415051101";
 
-  // Shared State di Parent
-  int favoriteCount = 2;
-  bool isCourse1Favorite = true;
-  bool isCourse2Favorite = false;
+  // Single Source of Truth untuk status favorit course
+  bool isCourseFavorite = false;
+
+  void _handleFavoriteChanged() {
+    setState(() {
+      isCourseFavorite = !isCourseFavorite;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,34 +53,22 @@ class _ParentStatePageState extends State<ParentStatePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Total Favorites (Parent State): $favoriteCount',
+              'Status Global (Parent): ${isCourseFavorite ? "Favorit ❤️" : "Bukan Favorit 🤍"}',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            // Child 1
-            CourseItemWidget(
-              courseTitle: 'Git & GitHub',
-              status: 'done',
-              isFavorite: isCourse1Favorite,
-              onFavoriteToggle: () {
-                setState(() {
-                  isCourse1Favorite = !isCourse1Favorite;
-                  favoriteCount += isCourse1Favorite ? 1 : -1;
-                });
-              },
+            // Widget Child 1 menerima data dari Single Source of Truth
+            CourseCardWidget(
+              title: 'Flutter UI Fundamentals',
+              isFavorite: isCourseFavorite,
+              onFavoriteChanged: _handleFavoriteChanged,
             ),
             const SizedBox(height: 10),
-            // Child 2
-            CourseItemWidget(
-              courseTitle: 'State Management',
-              status: 'active',
-              isFavorite: isCourse2Favorite,
-              onFavoriteToggle: () {
-                setState(() {
-                  isCourse2Favorite = !isCourse2Favorite;
-                  favoriteCount += isCourse2Favorite ? 1 : -1;
-                });
-              },
+            // Widget Child 2 menyerap nilai yang sama agar konsisten
+            CourseCardWidget(
+              title: 'State Management & Architecture',
+              isFavorite: isCourseFavorite,
+              onFavoriteChanged: _handleFavoriteChanged,
             ),
           ],
         ),
@@ -85,19 +77,17 @@ class _ParentStatePageState extends State<ParentStatePage> {
   }
 }
 
-// Child Widget yang menerima data lewat constructor dan callback (Prop Drilling)
-class CourseItemWidget extends StatelessWidget {
-  final String courseTitle;
-  final String status;
+// Child Widget yang mengandalkan constructor dan callback (Lifting State Up)
+class CourseCardWidget extends StatelessWidget {
+  final String title;
   final bool isFavorite;
-  final VoidCallback onFavoriteToggle;
+  final VoidCallback onFavoriteChanged;
 
-  const CourseItemWidget({
+  const CourseCardWidget({
     super.key,
-    required this.courseTitle,
-    required this.status,
+    required this.title,
     required this.isFavorite,
-    required this.onFavoriteToggle,
+    required this.onFavoriteChanged,
   });
 
   @override
@@ -109,19 +99,16 @@ class CourseItemWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(courseTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text('Status: $status', style: const TextStyle(color: Colors.grey)),
-              ],
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             IconButton(
               icon: Icon(
                 isFavorite ? Icons.favorite : Icons.favorite_border,
                 color: isFavorite ? Colors.red : Colors.grey,
               ),
-              onPressed: onFavoriteToggle, // Mengirim aksi ke parent via callback
+              onPressed: onFavoriteChanged,
             ),
           ],
         ),
