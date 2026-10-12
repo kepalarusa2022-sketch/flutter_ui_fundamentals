@@ -13,36 +13,25 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Course Explorer - Tahap 3',
+      title: 'Course Explorer - Tahap 4',
       theme: ThemeData(primarySwatch: Colors.indigo, useMaterial3: true),
-      home: const LiftingStatePage(),
+      home: const ValueNotifierPage(),
     );
   }
 }
 
-// Parent Widget sebagai Single Source of Truth
-class LiftingStatePage extends StatefulWidget {
-  const LiftingStatePage({super.key});
-
-  @override
-  State<LiftingStatePage> createState() => _LiftingStatePageState();
-}
-
-class _LiftingStatePageState extends State<LiftingStatePage> {
-  final String studentName = "Jack Rich Loro";
-  final String studentId = "2415051101";
-
-  // Single Source of Truth untuk status favorit course
-  bool isCourseFavorite = false;
-
-  void _handleFavoriteChanged() {
-    setState(() {
-      isCourseFavorite = !isCourseFavorite;
-    });
-  }
+class ValueNotifierPage extends StatelessWidget {
+  const ValueNotifierPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Identitas Mahasiswa
+    final String studentName = "Jack Rich Loro";
+    final String studentId = "2415051101";
+
+    // 1. Membuat ValueNotifier<int> untuk nilai sederhana (jumlah favorite)
+    final ValueNotifier<int> favoriteCounter = ValueNotifier<int>(2);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('$studentId - $studentName'),
@@ -52,63 +41,38 @@ class _LiftingStatePageState extends State<LiftingStatePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Status Global (Parent): ${isCourseFavorite ? "Favorit ❤️" : "Bukan Favorit 🤍"}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            // 2. Menampilkan nilai dengan ValueListenableBuilder agar rebuild area spesifik saja
+            ValueListenableBuilder<int>(
+              valueListenable: favoriteCounter,
+              builder: (context, value, child) {
+                return Text(
+                  'Total Favorites (ValueNotifier): $value',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                );
+              },
             ),
-            const SizedBox(height: 16),
-            // Widget Child 1 menerima data dari Single Source of Truth
-            CourseCardWidget(
-              title: 'Flutter UI Fundamentals',
-              isFavorite: isCourseFavorite,
-              onFavoriteChanged: _handleFavoriteChanged,
-            ),
-            const SizedBox(height: 10),
-            // Widget Child 2 menyerap nilai yang sama agar konsisten
-            CourseCardWidget(
-              title: 'State Management & Architecture',
-              isFavorite: isCourseFavorite,
-              onFavoriteChanged: _handleFavoriteChanged,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Child Widget yang mengandalkan constructor dan callback (Lifting State Up)
-class CourseCardWidget extends StatelessWidget {
-  final String title;
-  final bool isFavorite;
-  final VoidCallback onFavoriteChanged;
-
-  const CourseCardWidget({
-    super.key,
-    required this.title,
-    required this.isFavorite,
-    required this.onFavoriteChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            IconButton(
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? Colors.red : Colors.grey,
+            const SizedBox(height: 20),
+            Card(
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Pemrograman Mobile Flutter',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    // 3. Tombol untuk mengubah value notifier
+                    IconButton(
+                      icon: const Icon(Icons.favorite, color: Colors.red),
+                      onPressed: () {
+                        favoriteCounter.value += 1; // Mengubah nilai notifier
+                      },
+                    ),
+                  ],
+                ),
               ),
-              onPressed: onFavoriteChanged,
             ),
           ],
         ),
