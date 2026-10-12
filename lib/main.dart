@@ -1,9 +1,10 @@
 // Student ID: 2415051101 - Jack Rich Loro
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-// 1. Membuat ChangeNotifier class terpisah untuk mengelola state
-class CourseState extends ChangeNotifier {
+// 1. Membuat CourseProvider berbasis ChangeNotifier
+class CourseProvider extends ChangeNotifier {
   final Set<String> favorites = {};
 
   bool isFavorite(String code) {
@@ -16,12 +17,18 @@ class CourseState extends ChangeNotifier {
     } else {
       favorites.add(code);
     }
-    notifyListeners(); // Memberi tahu widget yang mendengarkan bahwa state berubah
+    notifyListeners();
   }
 }
 
 void main() {
-  runApp(const CourseExplorerApp());
+  runApp(
+    // 3. Membungkus aplikasi dengan ChangeNotifierProvider
+    ChangeNotifierProvider(
+      create: (_) => CourseProvider(),
+      child: const CourseExplorerApp(),
+    ),
+  );
 }
 
 class CourseExplorerApp extends StatelessWidget {
@@ -31,29 +38,26 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Course Explorer - Tahap 5',
+      title: 'Course Explorer - Tahap 6',
       theme: ThemeData(primarySwatch: Colors.indigo, useMaterial3: true),
-      home: const ChangeNotifierPage(),
+      home: const ProviderHomePage(),
     );
   }
 }
 
-class ChangeNotifierPage extends StatefulWidget {
-  const ChangeNotifierPage({super.key});
-
-  @override
-  State<ChangeNotifierPage> createState() => _ChangeNotifierPageState();
-}
-
-class _ChangeNotifierPageState extends State<ChangeNotifierPage> {
-  final String studentName = "Jack Rich Loro";
-  final String studentId = "2415051101";
-
-  // Inisialisasi CourseState
-  final CourseState courseState = CourseState();
+class ProviderHomePage extends StatelessWidget {
+  const ProviderHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Identitas Mahasiswa
+    final String studentName = "Jack Rich Loro";
+    final String studentId = "2415051101";
+
+    // Mengakses provider menggunakan context.watch()
+    final courseProvider = context.watch<CourseProvider>();
+    final bool isFav = courseProvider.isFavorite('PROV-01');
+
     return Scaffold(
       appBar: AppBar(
         title: Text('$studentId - $studentName'),
@@ -63,14 +67,9 @@ class _ChangeNotifierPageState extends State<ChangeNotifierPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AnimatedBuilder(
-              animation: courseState,
-              builder: (context, child) {
-                return Text(
-                  'Total Favorites (ChangeNotifier): ${courseState.favorites.length}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                );
-              },
+            Text(
+              'Total Favorites via Provider: ${courseProvider.favorites.length}',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Card(
@@ -81,22 +80,17 @@ class _ChangeNotifierPageState extends State<ChangeNotifierPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'State Management & Architecture',
+                      'Provider & Dependency Injection',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    AnimatedBuilder(
-                      animation: courseState,
-                      builder: (context, child) {
-                        final bool fav = courseState.isFavorite('SM-01');
-                        return IconButton(
-                          icon: Icon(
-                            fav ? Icons.favorite : Icons.favorite_border,
-                            color: fav ? Colors.red : Colors.grey,
-                          ),
-                          onPressed: () {
-                            courseState.toggleFavorite('SM-01');
-                          },
-                        );
+                    IconButton(
+                      icon: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav ? Colors.red : Colors.grey,
+                      ),
+                      onPressed: () {
+                        // Mengakses provider tanpa listen untuk memanggil aksi
+                        context.read<CourseProvider>().toggleFavorite('PROV-01');
                       },
                     ),
                   ],
