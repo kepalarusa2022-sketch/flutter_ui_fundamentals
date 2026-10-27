@@ -1,3 +1,5 @@
+// Student ID: 2415051101 - Jack Rich Loro
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/course.dart';
@@ -34,5 +36,17 @@ class CourseApiService {
     }
 
     throw Exception('Gagal membuat course');
+  }
+
+  Future<void> updateCourse(String id, Course course) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/courses/$id'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(course.toJson()),
+    );
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Gagal memperbarui course');
+    }
   }
 }

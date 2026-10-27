@@ -48,6 +48,24 @@ class CourseProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> updateCourse(String id, Course course) async {
+    isSaving = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      await repository.updateCourse(id, course);
+      await loadCourses();
+      return true;
+    } catch (e) {
+      error = e.toString();
+      return false;
+    } finally {
+      isSaving = false;
+      notifyListeners();
+    }
+  }
+
   bool isFavorite(String code) {
     return favorites.contains(code);
   }
