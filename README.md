@@ -18,3 +18,21 @@ Proyek ini menerapkan arsitektur modular berstruktur dengan alur ketergantungan 
 4. **`providers/`**: Mengelola *application state* (`isLoading`, `error`, `courses`, `favorites`), memanggil *repository*, dan memicu pembaruan antarmuka via `notifyListeners()`.
 5. **`screens/`**: Menyusun tata letak halaman utama dan navigasi responsif (`MainNavigationScreen`, `CourseScreen`, `CourseDetailScreen`, `FavoritesScreen`).
 6. **`widgets/`**: Menyimpan komponen *UI* modular yang dapat digunakan kembali (*reusable*), seperti `CourseCard`.
+
+---
+
+## REST API Endpoint Documentation
+
+Project ini terhubung dengan backend REST API untuk manajemen data mata kuliah (*courses*).
+
+- **Base URL:** `https://course-api-pearl.vercel.app`
+- **Endpoint Courses:** `https://course-api-pearl.vercel.app/courses`
+- **HTTP Method:** `GET`
+- **Status Code:** `200 OK`
+- **Struktur Field JSON:**
+  - `id` (Integer)
+  - `code` (String)
+  - `title` (String)
+  - `credits` (Integer)
+  - `status` (String)
+  - `created_at` (String)
