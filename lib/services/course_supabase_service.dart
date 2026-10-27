@@ -20,9 +20,17 @@ class CourseSupabaseService implements CourseDataSource {
         .toList();
   }
 
-  // Ganti int menjadi String agar sesuai dengan CourseDataSource
+  // Implementasi INSERT data ke Supabase
   @override
-  Future<Course> createCourse(Course course) => throw UnimplementedError();
+  Future<Course> createCourse(Course course) async {
+    final row = await supabase
+        .from('courses')
+        .insert(course.toJson())
+        .select()
+        .single();
+
+    return Course.fromJson(row);
+  }
 
   @override
   Future<void> updateCourse(String id, Course course) => throw UnimplementedError();
