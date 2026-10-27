@@ -2,18 +2,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_ui_fundamentals/services/course_service.dart';
+import 'package:flutter_ui_fundamentals/services/course_api_service.dart';
 import 'package:flutter_ui_fundamentals/repositories/course_repository.dart';
 import 'package:flutter_ui_fundamentals/providers/course_provider.dart';
 import 'package:flutter_ui_fundamentals/screens/main_navigation_screen.dart';
 
 void main() {
-  final courseService = CourseService();
-  final courseRepository = CourseRepository(courseService);
+  final apiService = CourseApiService('https://course-api-pearl.vercel.app');
+  final courseRepository = CourseRepository(apiService);
 
   runApp(
     ChangeNotifierProvider(
-      create: (_) => CourseProvider(courseRepository)..loadCourses(),
+      create: (_) => CourseProvider(courseRepository)..loadCourses(), // Menggunakan loadCourses() sesuai CourseProvider
       child: const CourseExplorerApp(),
     ),
   );

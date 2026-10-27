@@ -1,12 +1,12 @@
 import 'package:flutter_ui_fundamentals/models/course.dart';
-import 'package:flutter_ui_fundamentals/services/course_service.dart';
+import 'package:flutter_ui_fundamentals/services/course_api_service.dart';
 
 class CourseRepository {
-  final CourseService service;
+  final CourseApiService apiService;
 
-  CourseRepository(this.service);
+  CourseRepository(this.apiService);
 
   Future<List<Course>> getCourses() {
-    return service.fetchCourses(); // Diperbarui dari loadCourses() menjadi fetchCourses()
+    return apiService.getCourses();
   }
 }
