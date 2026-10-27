@@ -1,16 +1,25 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
-import 'package:flutter_ui_fundamentals/models/course.dart';
+import 'package:http/http.dart' as http;
+import '../models/course.dart';
 
 class CourseService {
-  Future<List<Course>> loadCourses() async {
-    final jsonString = await rootBundle.loadString(
-      'assets/data/student_data.json',
-    );
-    final data = jsonDecode(jsonString) as Map<String, dynamic>;
-    final list = data['courses'] as List<dynamic>;
-    return list
-        .map((e) => Course.fromJson(e as Map<String, dynamic>))
-        .toList();
+  // Endpoint REST API yang diberikan
+  static const String apiUrl = 'https://course-api-pearl.vercel.app/courses';
+
+  Future<List<Course>> fetchCourses() async {
+    final response = await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body);
+      
+      // Konversi data JSON menjadi List<Course>
+      List<Course> courses = body
+          .map((dynamic item) => Course.fromJson(item))
+          .toList();
+          
+      return courses;
+    } else {
+      throw Exception('Gagal memuat data course. Status Code: ${response.statusCode}');
+    }
   }
 }

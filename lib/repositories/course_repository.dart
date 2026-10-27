@@ -7,6 +7,6 @@ class CourseRepository {
   CourseRepository(this.service);
 
   Future<List<Course>> getCourses() {
-    return service.loadCourses();
+    return service.fetchCourses(); // Diperbarui dari loadCourses() menjadi fetchCourses()
   }
 }
