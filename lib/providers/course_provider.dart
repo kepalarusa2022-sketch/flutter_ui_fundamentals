@@ -1,5 +1,4 @@
 // Student ID: 2415051101 - Jack Rich Loro
-// Tahap 15: CourseProvider dengan penanganan state & debugging
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ui_fundamentals/models/course.dart';
@@ -13,6 +12,7 @@ class CourseProvider extends ChangeNotifier {
   List<Course> courses = [];
   bool isLoading = false;
   String? error;
+  bool isSaving = false;
   final Set<String> favorites = {};
 
   Future<void> loadCourses() async {
@@ -30,6 +30,24 @@ class CourseProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> createCourse(Course course) async {
+    isSaving = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      await repository.createCourse(course);
+      await loadCourses();
+      return true;
+    } catch (e) {
+      error = e.toString();
+      return false;
+    } finally {
+      isSaving = false;
+      notifyListeners();
+    }
+  }
+
   bool isFavorite(String code) {
     return favorites.contains(code);
   }
@@ -40,7 +58,6 @@ class CourseProvider extends ChangeNotifier {
     } else {
       favorites.add(code);
     }
-    // Wajib memanggil notifyListeners() agar UI memperbarui tampilan
     notifyListeners();
   }
 }

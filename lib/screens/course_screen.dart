@@ -1,9 +1,12 @@
+// Student ID: 2415051101 - Jack Rich Loro
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_ui_fundamentals/providers/course_provider.dart';
 import 'package:flutter_ui_fundamentals/widgets/course_card.dart';
 import 'package:flutter_ui_fundamentals/widgets/error_view.dart';
 import 'package:flutter_ui_fundamentals/screens/favorites_screen.dart';
+import 'package:flutter_ui_fundamentals/screens/add_course_screen.dart';
 
 class CourseScreen extends StatelessWidget {
   const CourseScreen({super.key});
@@ -82,6 +85,19 @@ class CourseScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      // Tambahkan FloatingActionButton di sini agar tombol plus muncul
+  floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddCourseScreen(),
+            ),
+          );
+        },
+        tooltip: 'Tambah Kursus',
+        child: const Icon(Icons.add),
       ),
     );
   }
