@@ -8,6 +8,7 @@ import 'course_data_source.dart';
 class CourseSupabaseService implements CourseDataSource {
   final supabase = Supabase.instance.client;
 
+  
   @override
   Future<List<Course>> getCourses() async {
     final data = await supabase
@@ -20,7 +21,7 @@ class CourseSupabaseService implements CourseDataSource {
         .toList();
   }
 
-  // Implementasi INSERT data ke Supabase
+  
   @override
   Future<Course> createCourse(Course course) async {
     final row = await supabase
@@ -32,15 +33,21 @@ class CourseSupabaseService implements CourseDataSource {
     return Course.fromJson(row);
   }
 
-  // Implementasi UPDATE data di Supabase
+  
   @override
   Future<void> updateCourse(String id, Course course) async {
     await supabase
         .from('courses')
         .update(course.toJson())
-        .eq('id', id);
+        .eq('code', id);
   }
 
+  
   @override
-  Future<void> deleteCourse(String id) => throw UnimplementedError();
+  Future<void> deleteCourse(String id) async {
+    await supabase
+        .from('courses')
+        .delete()
+        .eq('code', id);
+  }
 }
