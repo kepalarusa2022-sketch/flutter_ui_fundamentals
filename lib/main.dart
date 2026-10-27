@@ -3,14 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_ui_fundamentals/services/course_api_service.dart';
+
+import 'package:flutter_ui_fundamentals/services/course_supabase_service.dart';
 import 'package:flutter_ui_fundamentals/repositories/course_repository.dart';
 import 'package:flutter_ui_fundamentals/providers/course_provider.dart';
 import 'package:flutter_ui_fundamentals/screens/course_screen.dart';
 
-// Ganti dengan URL dan Publishable Key dari project Supabase
-const String supabaseUrl = 'YOUR_SUPABASE_URL';
-const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+
+const String supabaseUrl = 'https://pugfdvhldusonayslhui.supabase.co/'; // Sesuaikan URL Supabase Anda
+const String supabaseAnonKey = 'sb_publishable_lklcxyhn_oRyj4P2B2ejOA_2Y8qRKZi'; 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,8 +22,8 @@ Future<void> main() async {
     publishableKey: supabaseAnonKey,
   );
 
-  // Jika Anda masih menggunakan API Service sementara atau beralih ke Supabase:
-  final dataSource = CourseApiService('https://course-api-pearl.vercel.app');
+  // Menggunakan CourseSupabaseService untuk mengambil data dari database Supabase
+  final dataSource = CourseSupabaseService();
   final courseRepository = CourseRepository(dataSource);
 
   runApp(
