@@ -32,6 +32,7 @@ Future<void> main() async {
       child: const CourseExplorerApp(),
     ),
   );
+  
 }
 
 class CourseExplorerApp extends StatelessWidget {
