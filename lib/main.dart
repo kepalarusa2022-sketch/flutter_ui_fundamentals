@@ -8,8 +8,8 @@ import 'package:flutter_ui_fundamentals/providers/course_provider.dart';
 import 'package:flutter_ui_fundamentals/screens/course_screen.dart';
 
 void main() {
-  final apiService = CourseApiService('https://course-api-pearl.vercel.app');
-  final courseRepository = CourseRepository(apiService);
+  final dataSource = CourseApiService('https://course-api-pearl.vercel.app');
+  final courseRepository = CourseRepository(dataSource);
 
   runApp(
     ChangeNotifierProvider(

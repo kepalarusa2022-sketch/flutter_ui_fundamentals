@@ -1,26 +1,18 @@
 // Student ID: 2415051101 - Jack Rich Loro
 
 import 'package:flutter_ui_fundamentals/models/course.dart';
-import 'package:flutter_ui_fundamentals/services/course_api_service.dart';
+import 'package:flutter_ui_fundamentals/services/course_data_source.dart';
 
 class CourseRepository {
-  final CourseApiService apiService;
+  CourseRepository(this.dataSource);
 
-  CourseRepository(this.apiService);
+  final CourseDataSource dataSource;
 
-  Future<List<Course>> getCourses() {
-    return apiService.getCourses();
-  }
+  Future<List<Course>> getCourses() => dataSource.getCourses();
 
-  Future<Course> createCourse(Course course) {
-    return apiService.createCourse(course);
-  }
+  Future<Course> createCourse(Course course) => dataSource.createCourse(course);
 
-  Future<void> updateCourse(String id, Course course) {
-    return apiService.updateCourse(id, course);
-  }
+  Future<void> updateCourse(String id, Course course) => dataSource.updateCourse(id, course);
 
-  Future<void> deleteCourse(String id) {
-    return apiService.deleteCourse(id);
-  }
+  Future<void> deleteCourse(String id) => dataSource.deleteCourse(id);
 }
