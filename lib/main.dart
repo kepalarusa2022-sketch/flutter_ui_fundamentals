@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_ui_fundamentals/services/course_api_service.dart';
 import 'package:flutter_ui_fundamentals/repositories/course_repository.dart';
 import 'package:flutter_ui_fundamentals/providers/course_provider.dart';
-import 'package:flutter_ui_fundamentals/screens/main_navigation_screen.dart';
+import 'package:flutter_ui_fundamentals/screens/course_screen.dart';
 
 void main() {
   final apiService = CourseApiService('https://course-api-pearl.vercel.app');
@@ -13,7 +13,7 @@ void main() {
 
   runApp(
     ChangeNotifierProvider(
-      create: (_) => CourseProvider(courseRepository)..loadCourses(), // Menggunakan loadCourses() sesuai CourseProvider
+      create: (_) => CourseProvider(courseRepository)..loadCourses(),
       child: const CourseExplorerApp(),
     ),
   );
@@ -28,10 +28,10 @@ class CourseExplorerApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Course Explorer v2',
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
-      home: const MainNavigationScreen(),
+      home: const CourseScreen(),
     );
   }
 }

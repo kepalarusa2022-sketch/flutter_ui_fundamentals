@@ -27,7 +27,7 @@ class CourseCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Tombol Edit untuk Tahap 7
+            // Tombol Edit (Tahap 7)
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.blue),
               tooltip: 'Edit Kursus',
@@ -38,6 +38,46 @@ class CourseCard extends StatelessWidget {
                     builder: (context) => EditCourseScreen(course: course),
                   ),
                 );
+              },
+            ),
+            // Tombol Delete dengan AlertDialog Konfirmasi (Tahap 8)
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              tooltip: 'Hapus Kursus',
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Konfirmasi Hapus'),
+                    content: Text('Apakah Anda yakin ingin menghapus kursus "${course.title}"?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Batal'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirm == true) {
+                  final success = await provider.deleteCourse(course.code);
+
+                  if (!context.mounted) return;
+
+                  if (success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Kursus berhasil dihapus!')),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Gagal menghapus kursus: ${provider.error}')),
+                    );
+                  }
+                }
               },
             ),
             // Tombol Favorit
